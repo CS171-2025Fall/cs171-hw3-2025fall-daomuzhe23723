@@ -1,7 +1,7 @@
 # Assignment 4: Global Illumination
 
-Name:  
-Student ID:  
+Name:  Liu Zhen
+Student ID:  2023533027
 
 **Please write your Chinese name and your student ID in this README.**
 

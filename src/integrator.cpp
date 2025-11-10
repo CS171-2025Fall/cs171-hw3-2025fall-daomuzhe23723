@@ -63,13 +63,21 @@ void IntersectionTestIntegrator::render(ref<Camera> camera, ref<Scene> scene) {
         // assert(pixel_sample.y >= dy && pixel_sample.y <= dy + 1);
         // const Vec3f &L = Li(scene, ray, sampler);
         // camera->getFilm()->commitSample(pixel_sample, L);
+        const Vec2f &pixel_sample = sampler.getPixelSample();
+        auto ray =
+            camera->generateDifferentialRay(pixel_sample.x, pixel_sample.y);
+        // Accumulate radiance
+        assert(pixel_sample.x >= dx && pixel_sample.x <= dx + 1);
+        assert(pixel_sample.y >= dy && pixel_sample.y <= dy + 1);
+        const Vec3f &L = Li(scene, ray, sampler);
+        camera->getFilm()->commitSample(pixel_sample, L);
       }
     }
   }
 }
 
-Vec3f IntersectionTestIntegrator::Li(
-    ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const {
+Vec3f IntersectionTestIntegrator::Li(ref<Scene> scene, DifferentialRay &ray,
+                                     Sampler &sampler) const {
   Vec3f color(0.0);
 
   // Cast a ray until we hit a non-specular surface or miss
@@ -78,7 +86,7 @@ Vec3f IntersectionTestIntegrator::Li(
   SurfaceInteraction interaction;
 
   for (int i = 0; i < max_depth; ++i) {
-    interaction      = SurfaceInteraction();
+    interaction = SurfaceInteraction();
     bool intersected = scene->intersect(ray, interaction);
 
     // Perform RTTI to determine the type of the surface
@@ -104,7 +112,9 @@ Vec3f IntersectionTestIntegrator::Li(
       // @see SurfaceInteraction::spawnRay
       //
       // You should update ray = ... with the spawned ray
-      UNIMPLEMENTED;
+      Float *pdf = nullptr;
+      interaction.bsdf->sample(interaction, sampler, pdf);
+      ray = interaction.spawnRay(interaction.wi);
       continue;
     }
 
@@ -130,8 +140,8 @@ Vec3f IntersectionTestIntegrator::directLighting(
     ref<Scene> scene, SurfaceInteraction &interaction) const {
   Vec3f color(0, 0, 0);
   Float dist_to_light = Norm(point_light_position - interaction.p);
-  Vec3f light_dir     = Normalize(point_light_position - interaction.p);
-  auto test_ray       = DifferentialRay(interaction.p, light_dir);
+  Vec3f light_dir = Normalize(point_light_position - interaction.p);
+  auto test_ray = DifferentialRay(interaction.p, light_dir);
 
   // TODO(HW3): Test for occlusion
   //
@@ -148,12 +158,21 @@ Vec3f IntersectionTestIntegrator::directLighting(
   //
   //    You can use iteraction.p to get the intersection position.
   //
-  UNIMPLEMENTED;
+  Vec3f new_start = interaction.p + interaction.normal * 0.0001f;
+  auto shadow_ray = DifferentialRay(new_start, light_dir);
+  SurfaceInteraction shadow_isect;
+
+  if (scene->intersect(shadow_ray, shadow_isect)) {
+    Float dist_hit = Norm(shadow_isect.p - interaction.p);
+    Float eps = 1e-4f;
+    if (dist_hit < dist_to_light - eps)
+      return Vec3f(0, 0, 0);
+  }
 
   // Not occluded, compute the contribution using perfect diffuse diffuse model
   // Perform a quick and dirty check to determine whether the BSDF is ideal
   // diffuse by RTTI
-  const BSDF *bsdf      = interaction.bsdf;
+  const BSDF *bsdf = interaction.bsdf;
   bool is_ideal_diffuse = dynamic_cast<const IdealDiffusion *>(bsdf) != nullptr;
 
   if (bsdf != nullptr && is_ideal_diffuse) {
@@ -166,11 +185,12 @@ Vec3f IntersectionTestIntegrator::directLighting(
 
     // The angle between light direction and surface normal
     Float cos_theta =
-        std::max(Dot(light_dir, interaction.normal), 0.0f);  // one-sided
+        std::max(Dot(light_dir, interaction.normal), 0.0f); // one-sided
 
     // You should assign the value to color
     // color = ...
-    UNIMPLEMENTED;
+    Vec3f Li = Vec3f(1.0f, 0.9f, 0.6f);
+    color = Li * bsdf->evaluate(interaction) * cos_theta;
   }
 
   return color;
@@ -187,14 +207,15 @@ void PathIntegrator::render(ref<Camera> camera, ref<Scene> scene) {
   UNIMPLEMENTED;
 }
 
-Vec3f PathIntegrator::Li(
-    ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const {
+Vec3f PathIntegrator::Li(ref<Scene> scene, DifferentialRay &ray,
+                         Sampler &sampler) const {
   // This is left as the next assignment
   UNIMPLEMENTED;
 }
 
-Vec3f PathIntegrator::directLighting(
-    ref<Scene> scene, SurfaceInteraction &interaction, Sampler &sampler) const {
+Vec3f PathIntegrator::directLighting(ref<Scene> scene,
+                                     SurfaceInteraction &interaction,
+                                     Sampler &sampler) const {
   // This is left as the next assignment
   UNIMPLEMENTED;
 }
@@ -215,7 +236,7 @@ IncrementalPathIntegrator::Li<PathImmediate>(ref<Scene> scene, DifferentialRay &
 
 // This is exactly a way to separate dec and def
 template <typename PathType>
-Vec3f IncrementalPathIntegrator::Li(  // NOLINT
+Vec3f IncrementalPathIntegrator::Li( // NOLINT
     ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const {
   // This is left as the next assignment
   UNIMPLEMENTED;
