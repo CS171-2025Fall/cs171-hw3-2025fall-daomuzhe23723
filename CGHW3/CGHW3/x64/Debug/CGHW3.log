@@ -1,0 +1,277 @@
+﻿  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\32579\Desktop\code\CGHW3>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include"  -G   --keep-dir CGHW3\x64\Debug  -maxrregcount=0    --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /FS /Zi /RTC1 /MDd " -Xcompiler "/FdCGHW3\x64\Debug\vc143.pdb" -o C:\Users\32579\Desktop\code\CGHW3\CGHW3\x64\Debug\kernel.cu.obj "C:\Users\32579\Desktop\code\CGHW3\kernel.cu" 
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(259): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+  Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(265): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(271): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(277): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(283): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(289): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(295): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(302): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(308): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(318): warning #546-D: transfer of control bypasses initialization of:
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(327): warning #546-D: transfer of control bypasses initialization of:
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(259): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+  Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(265): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(271): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(277): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(283): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(289): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(295): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(302): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(308): warning #546-D: transfer of control bypasses initialization of:
+              variable "threadPerBlock" (declared at line 311)
+              variable "numBlocksInit" (declared at line 312)
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(318): warning #546-D: transfer of control bypasses initialization of:
+              variable "numBlocks" (declared at line 321)
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(327): warning #546-D: transfer of control bypasses initialization of:
+              variable "h_centers" (declared at line 331)
+              variable "sceneMinHost" (declared at line 342)
+              variable "sceneMaxHost" (declared at line 343)
+              variable "sceneExtentHost" (declared at line 352)
+              variable "h_morton" (declared at line 360)
+            goto cleanup; 
+            ^
+  
+CUDACOMPILE : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+  kernel.cu
+  tmpxft_00004160_00000000-7_kernel.cudafe1.cpp
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(427): warning C4305: “参数”: 从“double”到“float”截断
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(428): warning C4305: “参数”: 从“double”到“float”截断
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(433): warning C4305: “参数”: 从“double”到“float”截断
+C:\Users\32579\Desktop\code\CGHW3\kernel.cu(434): warning C4305: “参数”: 从“double”到“float”截断
+    正在创建库 C:\Users\32579\Desktop\code\CGHW3\x64\Debug\CGHW3.lib 和对象 C:\Users\32579\Desktop\code\CGHW3\x64\Debug\CGHW3.exp
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+  CGHW3.vcxproj -> C:\Users\32579\Desktop\code\CGHW3\x64\Debug\CGHW3.exe

@@ -23,60 +23,157 @@ public:
   Integrator(const Properties &props) : ConfigurableObject(props) {}
 
   virtual void render(ref<Camera> camera, ref<Scene> scene) = 0;
-  std::string toString() const override                     = 0;
+  std::string toString() const override = 0;
 };
 
 /// @brief A simple & dirty integrator that only performs direct illumination
 /// estimation using relative simple methods.
 /// In this integrator, the light source is hardcoded as a point light. And
 /// we only accept diffuse surfaces for simplicity.
+
+// class IntersectionTestIntegrator : public Integrator {
+// public:
+//   IntersectionTestIntegrator(const Properties &props) : Integrator(props) {
+//     point_light_position = props.getProperty<Vec3f>("point_light_position",
+//                                                     Vec3f(0.0F, 5.0F, 0.0F));
+//     point_light_flux =
+//         props.getProperty<Vec3f>("point_light_flux",
+//         Vec3f(1.0F, 1.0F, 1.0F));
+
+//     max_depth = props.getProperty<int>("max_depth", 16);
+//     spp = props.getProperty<int>("spp", 8);
+//   }
+
+//   void render(ref<Camera> camera, ref<Scene> scene) override;
+
+//   /// @see Integrator::Li
+//   Vec3f Li( // NOLINT
+//       ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const;
+
+//   std::string toString() const override {
+//     std::ostringstream ss;
+//     ss << "IntersectionTestIntegrator[\n"
+//        << format("  point_light_position = {}\n", point_light_position)
+//        << format("  point_light_flux     = {}\n", point_light_flux)
+//        << format("  max_depth           = {}\n", max_depth)
+//        << format("  spp                 = {}\n", spp) << "]";
+//     return ss.str();
+//   }
+
+//   /// @brief Compute direct lighting at the interaction point
+//   Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction)
+//   const;
+
+// protected:
+//   /// The position of the point light
+//   Vec3f point_light_position;
+
+//   /// The radiance of the point light
+//   Vec3f point_light_flux;
+
+//   int max_depth, spp;
+// };
+
+// The code is for bonus1
+// class IntersectionTestIntegrator : public Integrator {
+// public:
+//   IntersectionTestIntegrator(const Properties &props) : Integrator(props) {
+//     point_light_position = Vec3f(0.0F, 1.5F, 1.0F);
+//     point_light_position1 = Vec3f(0.0F, 1.5F, 0.0F);
+//     point_light_flux = Vec3f(15.0f, 0.0f, 0.0f);
+//     point_light_flux1 = Vec3f(0.0f, 15.0f, 0.0f);
+
+//     max_depth = props.getProperty<int>("max_depth", 16);
+//     spp = props.getProperty<int>("spp", 8);
+//   }
+
+//   void render(ref<Camera> camera, ref<Scene> scene) override;
+
+//   /// @see Integrator::Li
+//   Vec3f Li( // NOLINT
+//       ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const;
+
+//   std::string toString() const override {
+//     std::ostringstream ss;
+//     ss << "IntersectionTestIntegrator[\n"
+//        << format("  point_light_position = {}\n", point_light_position)
+//        << format("  point_light_flux     = {}\n", point_light_flux)
+//        << format("  max_depth           = {}\n", max_depth)
+//        << format("  spp                 = {}\n", spp) << "]";
+//     return ss.str();
+//   }
+
+//   /// @brief Compute direct lighting at the interaction point
+//   Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction)
+//   const;
+
+// protected:
+//   /// The position of the point light
+//   Vec3f point_light_position;
+//   Vec3f point_light_position1;
+
+//   /// The radiance of the point light
+//   Vec3f point_light_flux;
+//   Vec3f point_light_flux1;
+
+//   int max_depth, spp;
+// };
+
+// The code is for bonus2
 class IntersectionTestIntegrator : public Integrator {
 public:
   IntersectionTestIntegrator(const Properties &props) : Integrator(props) {
-    point_light_position = props.getProperty<Vec3f>(
-        "point_light_position", Vec3f(0.0F, 5.0F, 0.0F));
-    point_light_flux =
-        props.getProperty<Vec3f>("point_light_flux", Vec3f(1.0F, 1.0F, 1.0F));
+    center = props.getProperty<Vec3f>("center", Vec3f(0.0F, 2.0F, 0.0F));
+    normal = props.getProperty<Vec3f>("normal", Vec3f(0.0F, -1.0F, 0.0F));
+    u = Vec3f(1.0F, 0.0F, 0.0F);
+    v = Vec3f(0.0F, 0.0F, 1.0F);
+    width = props.getProperty<float>("width", 1.0F);
+    height = props.getProperty<float>("height", 1.0F);
+    radiance = Vec3f(100.0F, 100.0F, 100.0F);
 
-    max_depth = props.getProperty<int>("max_depth", 16);
-    spp       = props.getProperty<int>("spp", 8);
+    max_depth = 16;
+    spp = 8;
+    num = 10;
   }
 
   void render(ref<Camera> camera, ref<Scene> scene) override;
 
   /// @see Integrator::Li
-  Vec3f Li(  // NOLINT
+  Vec3f Li( // NOLINT
       ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const;
 
   std::string toString() const override {
     std::ostringstream ss;
     ss << "IntersectionTestIntegrator[\n"
-       << format("  point_light_position = {}\n", point_light_position)
-       << format("  point_light_flux     = {}\n", point_light_flux)
+       << format("  center = {}\n", center) << format("  normal = {}\n", normal)
+       << format("  u = {}\n", u) << format("  v = {}\n", v)
+       << format("  width = {}\n", width) << format("  height = {}\n", height)
+       << format("  radiance = {}\n", radiance)
        << format("  max_depth           = {}\n", max_depth)
-       << format("  spp                 = {}\n", spp) << "]";
+       << format("  spp                 = {}\n", spp)
+       << format("  num                 = {}\n", num) << "]";
     return ss.str();
   }
 
   /// @brief Compute direct lighting at the interaction point
-  Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction) const;
+  Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction,
+                       Sampler &sampler) const;
 
 protected:
-  /// The position of the point light
-  Vec3f point_light_position;
+  Vec3f center;
+  Vec3f normal;
+  Vec3f u, v;
+  float width, height;
+  Vec3f radiance;
 
-  /// The radiance of the point light
-  Vec3f point_light_flux;
-
-  int max_depth, spp;
+  int max_depth, spp, num;
 };
 
 /// Retained for debugging
 class PathIntegrator : public Integrator {
 public:
   PathIntegrator(const Properties &props)
-      : Integrator(props),
-        max_depth(props.getProperty<int>("max_depth", 12)),
+      : Integrator(props), max_depth(props.getProperty<int>("max_depth", 12)),
         spp(props.getProperty<int>("spp", 32)) {}
 
   /// @see Integrator::render
@@ -86,7 +183,7 @@ public:
    * @brief The core function of path tracing. Perform Monte Carlo integration
    * given a ray, estimate the radiance as definition.
    */
-  virtual Vec3f Li(  // NOLINT
+  virtual Vec3f Li( // NOLINT
       ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const;
 
   std::string toString() const override {
@@ -99,7 +196,7 @@ public:
 
 protected:
   Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction,
-      Sampler &sampler) const;
+                       Sampler &sampler) const;
 
   int max_depth, spp;
 };
@@ -119,15 +216,15 @@ public:
    * - EMultipleImportanceSampling: Perform MIS
    */
   enum class IntegratorProfile {
-    ERandomWalk                 = 0,
-    ENextEventEstimation        = 1,
+    ERandomWalk = 0,
+    ENextEventEstimation = 1,
     EMultipleImportanceSampling = 2,
   };
 
   // Another setting for Integrator to promote *performance* for debugging
   enum class EstimatorProfile {
-    EImmediateEstimate = 0,  // for performance
-    EDeferredEstimate  = 1,  // for debug
+    EImmediateEstimate = 0, // for performance
+    EDeferredEstimate = 1,  // for debug
   };
 
   IncrementalPathIntegrator(const Properties &props)
@@ -152,23 +249,23 @@ public:
   Vec3f Li(ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const;
 
   /// @see Integrator::Li
-  Vec3f Li(
-      ref<Scene> scene, DifferentialRay &ray, Sampler &sampler) const override {
+  Vec3f Li(ref<Scene> scene, DifferentialRay &ray,
+           Sampler &sampler) const override {
     return Li<PathImmediate>(scene, ray, sampler);
   }
 
   // ++ Required by Object
   std::string toString() const override {
-    return format(
-        "IncrementalPathIntegrator[\n"
-        "  max_depth              = {}\n"
-        "  spp                    = {}\n"
-        "  rr_threshold           = {}\n"
-        "  (randomWalk, NEE, MIS) = ({}, {}, {})\n",
-        "  (immediate, deferred)  = ({}, {})\n"
-        "]",
-        max_depth, spp, rr_threshold, randomWalk(), nextEventEstimation(),
-        multipleImportanceSampling(), !deferredEstimate(), deferredEstimate());
+    return format("IncrementalPathIntegrator[\n"
+                  "  max_depth              = {}\n"
+                  "  spp                    = {}\n"
+                  "  rr_threshold           = {}\n"
+                  "  (randomWalk, NEE, MIS) = ({}, {}, {})\n",
+                  "  (immediate, deferred)  = ({}, {})\n"
+                  "]",
+                  max_depth, spp, rr_threshold, randomWalk(),
+                  nextEventEstimation(), multipleImportanceSampling(),
+                  !deferredEstimate(), deferredEstimate());
   }
   // --
 
@@ -200,7 +297,7 @@ protected:
   }
 
   /// Heuristic function for MIS
-  RDR_FORCEINLINE Float miWeight(Float pdfA, Float pdfB) const {  // NOLINT
+  RDR_FORCEINLINE Float miWeight(Float pdfA, Float pdfB) const { // NOLINT
     pdfA *= pdfA;
     pdfB *= pdfB;
     return pdfA / (pdfA + pdfB);

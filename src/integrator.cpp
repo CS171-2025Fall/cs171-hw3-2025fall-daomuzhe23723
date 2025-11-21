@@ -17,6 +17,9 @@
 #include "rdr/scene.h"
 #include "rdr/sdtree.h"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 RDR_NAMESPACE_BEGIN
 
 /* ===================================================================== *
@@ -89,6 +92,11 @@ Vec3f IntersectionTestIntegrator::Li(ref<Scene> scene, DifferentialRay &ray,
     interaction = SurfaceInteraction();
     bool intersected = scene->intersect(ray, interaction);
 
+    if (intersected && interaction.type == ESurfaceInteractionType::ELight &&
+        interaction.light) {
+      return interaction.light->Le(interaction, -ray.direction);
+    }
+
     // Perform RTTI to determine the type of the surface
     bool is_ideal_diffuse =
         dynamic_cast<const IdealDiffusion *>(interaction.bsdf) != nullptr;
@@ -132,67 +140,173 @@ Vec3f IntersectionTestIntegrator::Li(ref<Scene> scene, DifferentialRay &ray,
     return color;
   }
 
-  color = directLighting(scene, interaction);
+  color = directLighting(scene, interaction, sampler);
   return color;
 }
 
+// Vec3f IntersectionTestIntegrator::directLighting(
+//     ref<Scene> scene, SurfaceInteraction &interaction) const {
+//   Vec3f color(0, 0, 0);
+//   Float dist_to_light = Norm(point_light_position - interaction.p);
+//   Vec3f light_dir = Normalize(point_light_position - interaction.p);
+//   auto test_ray = DifferentialRay(interaction.p, light_dir);
+
+//   // TODO(HW3): Test for occlusion
+//   //
+//   // You should test if there is any intersection between interaction.p and
+//   // point_light_position using scene->intersect. If so, return an occluded
+//   // color. (or Vec3f color(0, 0, 0) to be specific)
+//   //
+//   // You may find the following variables useful:
+//   //
+//   // @see bool Scene::intersect(const Ray &ray, SurfaceInteraction
+//   &interaction)
+//   //    This function tests whether the ray intersects with any geometry in
+//   the
+//   //    scene. And if so, it returns true and fills the interaction with the
+//   //    intersection information.
+//   //
+//   //    You can use iteraction.p to get the intersection position.
+//   //
+//   SurfaceInteraction shadow_isect;
+
+//   if (scene->intersect(test_ray, shadow_isect)) {
+//     Float dist_hit = Norm(shadow_isect.p - interaction.p);
+//     Float eps = 1e-4f;
+//     if (dist_hit < dist_to_light - eps)
+//       return Vec3f(0, 0, 0);
+//   }
+
+//   // Not occluded, compute the contribution using perfect diffuse diffuse
+//   model
+//   // Perform a quick and dirty check to determine whether the BSDF is ideal
+//   // diffuse by RTTI
+//   const BSDF *bsdf = interaction.bsdf;
+//   bool is_ideal_diffuse = dynamic_cast<const IdealDiffusion *>(bsdf) !=
+//   nullptr;
+
+//   if (bsdf != nullptr && is_ideal_diffuse) {
+//     // TODO(HW3): Compute the contribution
+//     //
+//     // You can use bsdf->evaluate(interaction) * cos_theta to approximate the
+//     // albedo. In this homework, we do not need to consider a
+//     // radiometry-accurate model, so a simple phong-shading-like model is can
+//     be
+//     // used to determine the value of color.
+
+//     // The angle between light direction and surface normal
+//     Float cos_theta =
+//         std::max(Dot(light_dir, interaction.normal), 0.0f); // one-sided
+
+//     // You should assign the value to color
+//     // color = ...
+//     Vec3f Li = Vec3f(1.0f, 0.9f, 0.6f);
+//     color = bsdf->evaluate(interaction) * cos_theta * point_light_flux /
+//             (4.0f * static_cast<Float>(M_PI) * dist_to_light *
+//             dist_to_light);
+//   }
+
+//   return color;
+// }
+
+// The code is for bonus1
+// Vec3f IntersectionTestIntegrator::directLighting(
+//     ref<Scene> scene, SurfaceInteraction &interaction) const {
+//   Vec3f color(0, 0, 0);
+//   Float dist_to_light = Norm(point_light_position - interaction.p);
+//   Vec3f light_dir = Normalize(point_light_position - interaction.p);
+//   auto test_ray = DifferentialRay(interaction.p, light_dir);
+
+//   SurfaceInteraction shadow_isect;
+
+//   Float dist_to_light1 = Norm(point_light_position1 - interaction.p);
+//   Vec3f light_dir1 = Normalize(point_light_position1 - interaction.p);
+//   auto test_ray1 = DifferentialRay(interaction.p, light_dir1);
+//   SurfaceInteraction shadow_isect1;
+
+//   bool is_occluded = false;
+//   bool is_occluded1 = false;
+
+//   if (scene->intersect(test_ray1, shadow_isect1)) {
+//     Float dist_hit = Norm(shadow_isect1.p - interaction.p);
+//     Float eps = 1e-4f;
+//     if (dist_hit < dist_to_light1 - eps)
+//       is_occluded1 = true;
+//   }
+
+//   if (scene->intersect(test_ray, shadow_isect)) {
+//     Float dist_hit = Norm(shadow_isect.p - interaction.p);
+//     Float eps = 1e-4f;
+//     if (dist_hit < dist_to_light - eps)
+//       is_occluded = true;
+//   }
+
+//   if (is_occluded && is_occluded1)
+//     return Vec3f(0.0f, 0.0f, 0.0f);
+
+//   const BSDF *bsdf = interaction.bsdf;
+//   bool is_ideal_diffuse = dynamic_cast<const IdealDiffusion *>(bsdf) !=
+//   nullptr;
+
+//   if (!is_occluded && bsdf != nullptr && is_ideal_diffuse) {
+//     Vec3f Li = Vec3f(0.0f, 1.0f, 0.0f);
+//     Float cos_theta = std::max(Dot(light_dir, interaction.normal), 0.0f);
+//     color += bsdf->evaluate(interaction) * cos_theta * point_light_flux /
+//              (4.0f * static_cast<Float>(M_PI) * dist_to_light *
+//              dist_to_light);
+//   }
+
+//   if (!is_occluded1 && bsdf != nullptr && is_ideal_diffuse) {
+//     Vec3f Li = Vec3f(1.0f, 0.0f, 0.0f);
+//     Float cos_theta = std::max(Dot(light_dir1, interaction.normal), 0.0f);
+//     color +=
+//         bsdf->evaluate(interaction) * cos_theta * point_light_flux1 /
+//         (4.0f * static_cast<Float>(M_PI) * dist_to_light1 * dist_to_light1);
+//   }
+//   return color;
+// }
+
+// The code is for bonus2
 Vec3f IntersectionTestIntegrator::directLighting(
-    ref<Scene> scene, SurfaceInteraction &interaction) const {
+    ref<Scene> scene, SurfaceInteraction &interaction, Sampler &sampler) const {
   Vec3f color(0, 0, 0);
-  Float dist_to_light = Norm(point_light_position - interaction.p);
-  Vec3f light_dir = Normalize(point_light_position - interaction.p);
-  auto test_ray = DifferentialRay(interaction.p, light_dir);
+  const auto &lights = scene->getLights();
+  if (lights.empty())
+    return color;
 
-  // TODO(HW3): Test for occlusion
-  //
-  // You should test if there is any intersection between interaction.p and
-  // point_light_position using scene->intersect. If so, return an occluded
-  // color. (or Vec3f color(0, 0, 0) to be specific)
-  //
-  // You may find the following variables useful:
-  //
-  // @see bool Scene::intersect(const Ray &ray, SurfaceInteraction &interaction)
-  //    This function tests whether the ray intersects with any geometry in the
-  //    scene. And if so, it returns true and fills the interaction with the
-  //    intersection information.
-  //
-  //    You can use iteraction.p to get the intersection position.
-  //
-  Vec3f new_start = interaction.p + interaction.normal * 0.0001f;
-  auto shadow_ray = DifferentialRay(new_start, light_dir);
-  SurfaceInteraction shadow_isect;
+  for (const auto &light : lights) {
+    for (int j = 0; j < num * num; j++) {
+      SurfaceInteraction light_interaction =
+          light->sample(interaction, sampler);
+      Float dist_to_light = Norm(light_interaction.p - interaction.p);
+      Vec3f light_dir = Normalize(light_interaction.p - interaction.p);
+      auto test_ray = DifferentialRay(interaction.p, light_dir);
+      SurfaceInteraction shadow_isect;
 
-  if (scene->intersect(shadow_ray, shadow_isect)) {
-    Float dist_hit = Norm(shadow_isect.p - interaction.p);
-    Float eps = 1e-4f;
-    if (dist_hit < dist_to_light - eps)
-      return Vec3f(0, 0, 0);
+      if (scene->intersect(test_ray, shadow_isect)) {
+        Float dist_hit = Norm(shadow_isect.p - interaction.p);
+        Float eps = 1e-4f;
+        if (dist_hit < dist_to_light - EPS)
+          continue;
+      }
+
+      const BSDF *bsdf = interaction.bsdf;
+      bool is_ideal_diffuse =
+          dynamic_cast<const IdealDiffusion *>(bsdf) != nullptr;
+
+      if (bsdf != nullptr && is_ideal_diffuse) {
+        Float cos_theta = std::max(Dot(light_dir, interaction.normal), 0.0f);
+        Float cos_theta_light =
+            std::max(Dot(-light_dir, light_interaction.normal), 0.0f);
+
+        if (light_interaction.pdf > 0.0f)
+          color += bsdf->evaluate(interaction) * cos_theta * cos_theta_light *
+                   light->Le(light_interaction, -light_dir) /
+                   (light_interaction.pdf * dist_to_light * dist_to_light);
+      }
+    }
   }
-
-  // Not occluded, compute the contribution using perfect diffuse diffuse model
-  // Perform a quick and dirty check to determine whether the BSDF is ideal
-  // diffuse by RTTI
-  const BSDF *bsdf = interaction.bsdf;
-  bool is_ideal_diffuse = dynamic_cast<const IdealDiffusion *>(bsdf) != nullptr;
-
-  if (bsdf != nullptr && is_ideal_diffuse) {
-    // TODO(HW3): Compute the contribution
-    //
-    // You can use bsdf->evaluate(interaction) * cos_theta to approximate the
-    // albedo. In this homework, we do not need to consider a
-    // radiometry-accurate model, so a simple phong-shading-like model is can be
-    // used to determine the value of color.
-
-    // The angle between light direction and surface normal
-    Float cos_theta =
-        std::max(Dot(light_dir, interaction.normal), 0.0f); // one-sided
-
-    // You should assign the value to color
-    // color = ...
-    Vec3f Li = Vec3f(1.0f, 0.9f, 0.6f);
-    color = Li * bsdf->evaluate(interaction) * cos_theta;
-  }
-
+  color /= num * num;
   return color;
 }
 

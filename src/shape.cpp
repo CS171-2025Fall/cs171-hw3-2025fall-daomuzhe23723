@@ -8,35 +8,36 @@
 #include "rdr/canary.h"
 #include "rdr/interaction.h"
 #include "rdr/load_obj.h"
+#include "rdr/math_aliases.h"
 #include "rdr/ray.h"
 
 RDR_NAMESPACE_BEGIN
 
 Sphere::Sphere(const Properties &props)
-    : Shape(props),
-      center(props.getProperty<Vec3f>("center", Vec3f(0, 0, 0))),
+    : Shape(props), center(props.getProperty<Vec3f>("center", Vec3f(0, 0, 0))),
       radius(props.getProperty<Float>("radius", 1)) {}
 
 bool Sphere::intersect(Ray &ray, SurfaceInteraction &interaction) const {
   using InternalScalarType = Double;
-  using InternalVecType    = Vec<InternalScalarType, 3>;
+  using InternalVecType = Vec<InternalScalarType, 3>;
   const InternalVecType &o = Cast<InternalScalarType>(ray.origin);
   const InternalVecType &d = Normalize(Cast<InternalScalarType>(ray.direction));
   const InternalVecType &p = Cast<InternalScalarType>(center);
 
   InternalScalarType t, t1, t2;
-  {  // quadratic
+  { // quadratic
     /* Ray intersect with sphere
     ** ||o + td - p||_2^2 = r^2
     ** ||o - p||_2^2 + 2 * dot(o - p, d) * t + ||d||_2^2 * t^2 = r^2
     ** ||d||_2^2 * t^2 + 2 * dot(o - p, d) * t + ||o - p||_2^2 - r^2 = 0
     ** a = ||d||_2^2 = 1, b = 2 * dot(o - p, d), c = ||o - p||_2^2 - r^2
     */
-    const InternalVecType &omp  = o - p;
+    const InternalVecType &omp = o - p;
     const InternalScalarType &a = 1, b = 2 * Dot(d, omp),
                              c = SquareNorm(omp) - radius * radius;
 
-    if (b * b <= 4 * a * c) return false;
+    if (b * b <= 4 * a * c)
+      return false;
     const InternalScalarType &delta = sqrt(b * b - 4 * a * c);
 
     /* Numerically stable quadratic equation solver at^2 + bt + c = 0
@@ -69,11 +70,12 @@ bool Sphere::intersect(Ray &ray, SurfaceInteraction &interaction) const {
 
   position = delta_p + p;
 
-  constexpr InternalScalarType phiMax   = 2 * PI;
+  constexpr InternalScalarType phiMax = 2 * PI;
   constexpr InternalScalarType thetaMax = PI;
 
   InternalScalarType phi = std::atan2(delta_p.y, delta_p.x);
-  if (phi < 0) phi += 2 * PI;
+  if (phi < 0)
+    phi += 2 * PI;
 
   InternalScalarType theta = std::acos(delta_p.z / radius);
 
@@ -124,7 +126,7 @@ bool Sphere::intersect(Ray &ray, SurfaceInteraction &interaction) const {
   InternalVecType dpdu = phiMax * InternalVecType(-delta_p.y, delta_p.x, 0);
   InternalVecType dpdv =
       thetaMax * InternalVecType(delta_p.z * cos_phi, delta_p.z * sin_phi,
-                     -radius * std::sin(theta));
+                                 -radius * std::sin(theta));
 
   InternalVecType d2pduu =
       -phiMax * phiMax * InternalVecType(delta_p.x, delta_p.y, 0);
@@ -149,8 +151,8 @@ bool Sphere::intersect(Ray &ray, SurfaceInteraction &interaction) const {
   InternalVecType dndv =
       ((g * F - f * G) * dpdu + (f * F - g * E) * dpdv) * invEGF2;
 
-  interaction.setDifferential(Cast<Float>(position),
-      Cast<Float>(Normalize(delta_p)),
+  interaction.setDifferential(
+      Cast<Float>(position), Cast<Float>(Normalize(delta_p)),
       {static_cast<Float>(v), static_cast<Float>(u)}, Cast<Float>(dpdv),
       Cast<Float>(dpdu), Cast<Float>(dndv), Cast<Float>(dndu));
 
@@ -158,9 +160,7 @@ bool Sphere::intersect(Ray &ray, SurfaceInteraction &interaction) const {
   return true;
 }
 
-Float Sphere::area() const {
-  return 4 * PI * radius * radius;
-}
+Float Sphere::area() const { return 4 * PI * radius * radius; }
 
 SurfaceInteraction Sphere::sample(Sampler &sampler) const {
   Vec3f w = UniformSampleSphere(sampler.get2D());
@@ -184,27 +184,27 @@ Float Sphere::pdf(const SurfaceInteraction &interaction) const {
 TriangleMesh::TriangleMesh(const Properties &props)
     : Shape(props), mesh(make_ref<TriangleMeshResource>()) {
   auto path = props.getProperty<std::string>("path");
-  path      = FileResolver::resolveToAbs(path);
+  path = FileResolver::resolveToAbs(path);
 
   const auto transform = props.getProperty<Mat4f>("transform", IdentityMatrix4);
   const auto translate = props.getProperty<Vec3f>("translate", Vec3f(0.0));
   const auto normal_transform = Transpose(Inverse(transform));
 
   LoadObj(path, mesh->vertices, mesh->normals, mesh->texture_coordinates,
-      mesh->v_indices, mesh->n_indices, mesh->t_indices);
+          mesh->v_indices, mesh->n_indices, mesh->t_indices);
 
   if (mesh->vertices.empty())
     Exception_("Empty mesh is not allowed from [ {} ]", path);
   std::transform(mesh->vertices.cbegin(), mesh->vertices.cend(),
-      mesh->vertices.begin(), [&](const auto &vertex) {
-        const auto tmp = Mul(transform, Vec4f(vertex, 1.0));
-        return Vec3f(tmp.xyz()) / tmp.w + translate;
-      });
+                 mesh->vertices.begin(), [&](const auto &vertex) {
+                   const auto tmp = Mul(transform, Vec4f(vertex, 1.0));
+                   return Vec3f(tmp.xyz()) / tmp.w + translate;
+                 });
   std::transform(mesh->normals.cbegin(), mesh->normals.cend(),
-      mesh->normals.begin(), [&](const auto &normal) {
-        return Mul(normal_transform, Vec4f(normal, 0)).xyz();
-      });
-  mesh->has_normal  = !mesh->normals.empty();
+                 mesh->normals.begin(), [&](const auto &normal) {
+                   return Mul(normal_transform, Vec4f(normal, 0)).xyz();
+                 });
+  mesh->has_normal = !mesh->normals.empty();
   mesh->has_texture = !mesh->texture_coordinates.empty();
 
 #ifdef USE_EMBREE
@@ -258,12 +258,10 @@ bool TriangleMesh::intersect(Ray &ray, SurfaceInteraction &interaction) const {
   return intersect;
 }
 
-Float TriangleMesh::area() const {
-  return total_area;
-}
+Float TriangleMesh::area() const { return total_area; }
 
 SurfaceInteraction TriangleMesh::sample(Sampler &sampler) const {
-  Float dist_pdf        = NAN;
+  Float dist_pdf = NAN;
   size_t triangle_index = dist->sampleDiscrete(sampler.get1D(), &dist_pdf);
   assert(triangle_index < areas.size());
 
@@ -278,20 +276,92 @@ SurfaceInteraction TriangleMesh::sample(Sampler &sampler) const {
   // Interpolate in barycentric coordinates.
   // TODO: Interpolate normals.
   SurfaceInteraction interaction;
-  interaction.setGeneral(
-      barycentric.x * v0 + barycentric.y * v1 + barycentric.z * v2,
-      Normalize(Cross(v1 - v0, v2 - v0)));
+  interaction.setGeneral(barycentric.x * v0 + barycentric.y * v1 +
+                             barycentric.z * v2,
+                         Normalize(Cross(v1 - v0, v2 - v0)));
   interaction.setPdf(dist_pdf / areas[triangle_index], EMeasure::EArea);
 
   return interaction;
 }
 
-AABB TriangleMesh::getBound() const {
-  return accel->getBound();
-}
+AABB TriangleMesh::getBound() const { return accel->getBound(); }
 
 Float TriangleMesh::pdf(const SurfaceInteraction &) const {
   return 1.0_F / total_area;
+}
+
+Rectangle::Rectangle(const Properties &props) : Shape(props) {
+  center = props.getProperty<Vec3f>("center", Vec3f(0.0F, 2.0F, 0.0F));
+  width = props.getProperty<Float>("width", 1.0_F);
+  height = props.getProperty<Float>("height", 1.0_F);
+  normal = props.getProperty<Vec3f>("normal", Vec3f(0, -1, 0));
+
+  normal = Normalize(normal);
+  Vec3f basis = std::abs(normal.z) < 0.999f ? Vec3f(0, 0, 1) : Vec3f(1, 0, 0);
+  u_vec = Normalize(Cross(normal, basis));
+  v_vec = Cross(normal, u_vec);
+}
+
+bool Rectangle::intersect(Ray &ray, SurfaceInteraction &interaction) const {
+  if (std::abs(Dot(ray.direction, normal)) < EPS)
+    return false;
+  Float t = Dot(center - ray.origin, normal) / Dot(ray.direction, normal);
+
+  if (!ray.withinTimeRange(t))
+    return false;
+
+  Vec3f p = ray.origin + t * ray.direction;
+
+  Vec3f d = p - center;
+  Float u = Dot(d, u_vec) / (0.5f * width);
+  Float v = Dot(d, v_vec) / (0.5f * height);
+
+  if (u < -1 || u > 1 || v < -1 || v > 1)
+    return false;
+
+  ray.setTimeMax(t);
+
+  Vec2f uv((u + 1) * 0.5f, (v + 1) * 0.5f);
+
+  interaction.setDifferential(p, normal, uv, u_vec * 0.5F * width,
+                              v_vec * 0.5F * height, Vec3f(0, 0, 0),
+                              Vec3f(0, 0, 0));
+
+  return true;
+}
+
+Float Rectangle::area() const { return width * height; }
+
+SurfaceInteraction Rectangle::sample(Sampler &sampler) const {
+  Vec2f sample = sampler.get2D();
+  sample.x -= 0.5f;
+  sample.y -= 0.5f;
+  sample.x *= width;
+  sample.y *= height;
+
+  Vec3f p = center + sample.x * u_vec + sample.y * v_vec;
+
+  SurfaceInteraction interaction{};
+  interaction.setGeneral(p, normal);
+  interaction.setPdf(1.0f / area(), EMeasure::EArea);
+
+  return interaction;
+}
+
+AABB Rectangle::getBound() const {
+  const float half_w = width * 0.5f;
+  const float half_h = height * 0.5f;
+  Vec3f p0 = center - half_w * u_vec - half_h * v_vec;
+  Vec3f p1 = center + half_w * u_vec - half_h * v_vec;
+  Vec3f p2 = center + half_w * u_vec + half_h * v_vec;
+  Vec3f p3 = center - half_w * u_vec + half_h * v_vec;
+  Vec3f min_pos = Min(Min(p0, p1), Min(p2, p3));
+  Vec3f max_pos = Max(Max(p0, p1), Max(p2, p3));
+  return AABB(min_pos - EPS, max_pos + EPS);
+}
+
+Float Rectangle::pdf(const SurfaceInteraction &interaction) const {
+  return 1.0f / area();
 }
 
 RDR_NAMESPACE_END

@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\32579\\Desktop\\code\\CGHW3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E1DFB506-D094-4B1A-9D74-62DB78ABB386}|CGHW3.vcxproj|C:\\Users\\32579\\Desktop\\code\\CGHW3\\kernel.cu||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{E1DFB506-D094-4B1A-9D74-62DB78ABB386}|CGHW3.vcxproj|solutionrelative:kernel.cu||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "kernel.cu",
+              "DocumentMoniker": "C:\\Users\\32579\\Desktop\\code\\CGHW3\\kernel.cu",
+              "RelativeDocumentMoniker": "kernel.cu",
+              "ToolTip": "C:\\Users\\32579\\Desktop\\code\\CGHW3\\kernel.cu",
+              "RelativeToolTip": "kernel.cu",
+              "ViewState": "AQIAAEoBAAAAAAAAAAAAANEBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-11T01:39:09.32Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
